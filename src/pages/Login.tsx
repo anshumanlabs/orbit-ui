@@ -16,7 +16,7 @@ const Login = () => {
         </Typography>
 
         <Typography sx={{ mb: 4 }}>
-          Connect Gmail and Calendar to start
+          Connect your email account to start
           using your personal AI assistant.
         </Typography>
 
@@ -25,7 +25,7 @@ const Login = () => {
           size="large"
           onClick={loginWithGoogle}
         >
-          Connect Google Account
+          Connect Email Account
         </Button>
       </Paper>
     </Container>

@@ -10,6 +10,9 @@ const cognitoAuthConfig = {
   redirect_uri: import.meta.env.VITE_COGNITO_REDIRECT_URI,
   response_type: import.meta.env.VITE_COGNITO_RESPONSE_TYPE,
   scope: import.meta.env.VITE_COGNITO_SCOPE,
+  onSigninCallback: () => {
+    window.history.replaceState({}, document.title, window.location.pathname);
+  },
 };
 
 createRoot(document.getElementById('root')!).render(

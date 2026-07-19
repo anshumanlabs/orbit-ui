@@ -1,18 +1,10 @@
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "react-oidc-context";
 
-function App() {
+import Dashboard from "./pages/Dashboard";
+
+function AuthGate() {
   const auth = useAuth();
-
-  if (!auth) {
-    return <div>Loading...</div>;
-  }
-
-  const signOutRedirect = () => {
-    const clientId = import.meta.env.VITE_COGNITO_CLIENT_ID;
-    const logoutUri = import.meta.env.VITE_COGNITO_LOGOUT_URI;
-    const cognitoDomain = import.meta.env.VITE_COGNITO_DOMAIN;
-    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
-  };
 
   if (auth.isLoading) {
     return <div>Loading...</div>;
@@ -22,24 +14,46 @@ function App() {
     return <div>Encountering error... {auth.error.message}</div>;
   }
 
+  // Active Cognito session -> Dashboard.
   if (auth.isAuthenticated) {
-    return (
-      <div>
-        <pre> Hello: {auth.user?.profile.email} </pre>
-        <pre> ID Token: {auth.user?.id_token} </pre>
-        <pre> Access Token: {auth.user?.access_token} </pre>
-        <pre> Refresh Token: {auth.user?.refresh_token} </pre>
-
-        <button onClick={() => auth.removeUser()}>Sign out</button>
-      </div>
-    );
+    return <Navigate to="/dashboard" replace />;
   }
 
+  // No session -> Cognito login (once).
+  auth.signinRedirect();
+  return <div>Redirecting to login...</div>;
+}
+
+function RequireAuth({ children }: { children: React.ReactNode }) {
+  const auth = useAuth();
+
+  if (auth.isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!auth.isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <>{children}</>;
+}
+
+function App() {
   return (
-    <div>
-      <button onClick={() => auth.signinRedirect()}>Sign in</button>
-      <button onClick={() => signOutRedirect()}>Sign out</button>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<AuthGate />} />
+        <Route
+          path="/dashboard"
+          element={
+            <RequireAuth>
+              <Dashboard />
+            </RequireAuth>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
