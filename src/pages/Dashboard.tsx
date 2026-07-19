@@ -2,7 +2,9 @@ import {
   Container,
   Paper,
   Typography,
+  Button
 } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   return (
@@ -27,6 +29,15 @@ const Dashboard = () => {
           <li>AI Chat</li>
           <li>Meeting Summaries</li>
         </ul>
+
+        <Button
+          variant="contained"
+          component={Link}
+          to="/chat"
+          sx={{ mt: 3 }}
+        >
+          Open AI Chat
+        </Button>
       </Paper>
     </Container>
   );
