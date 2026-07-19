@@ -1,17 +1,25 @@
 import { useState, useRef, useEffect } from "react";
 import {
-  Box,
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
   Container,
   Paper,
-  Typography,
   TextField,
-  IconButton,
   List,
   ListItem,
   ListItemAvatar,
   Avatar,
   CircularProgress,
+  Box,
+  Chip,
 } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import SmartToyIcon from "@mui/icons-material/SmartToy";
+import PersonIcon from "@mui/icons-material/Person";
+import SendIcon from "@mui/icons-material/Send";
+import { useNavigate } from "react-router-dom";
 
 const LAMBDA_URL = import.meta.env.VITE_LAMBDA_URL;
 
@@ -26,6 +34,7 @@ const ChatPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -88,114 +97,137 @@ const ChatPage = () => {
   };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
-      <Paper sx={{ p: 2, height: "80vh", display: "flex", flexDirection: "column" }}>
-        <Typography variant="h5" sx={{ mb: 2 }}>
-          AI Chat
-        </Typography>
+    <Box sx={{ display: "flex", flexDirection: "column", height: "100vh", bgcolor: "grey.100" }}>
+      <AppBar position="static" elevation={1}>
+        <Toolbar variant="dense">
+          <IconButton edge="start" color="inherit" onClick={() => navigate("/dashboard")} sx={{ mr: 2 }}>
+            <ArrowBackIcon />
+          </IconButton>
+          <SmartToyIcon sx={{ mr: 1 }} />
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            AI Chat
+          </Typography>
+          <Chip label="Online" color="success" size="small" />
+        </Toolbar>
+      </AppBar>
 
-        <Box
-          sx={{
-            flex: 1,
-            overflowY: "auto",
-            border: "1px solid",
-            borderColor: "divider",
-            borderRadius: 1,
-            p: 2,
-            backgroundColor: "background.default",
-          }}
-        >
-          {messages.length === 0 && (
-            <Typography color="text.secondary" sx={{ textAlign: "center", mt: 10 }}>
-              Start a conversation...
-            </Typography>
-          )}
-          <List>
-            {messages.map((msg, idx) => (
-              <ListItem
-                key={idx}
-                sx={{
-                  justifyContent: msg.role === "user" ? "flex-end" : "flex-start",
-                  px: 0,
-                }}
-              >
-                <Box
+      <Container maxWidth="md" sx={{ mt: 2, mb: 2, flex: 1, display: "flex", flexDirection: "column" }}>
+        <Paper sx={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+          <Box
+            sx={{
+              flex: 1,
+              overflowY: "auto",
+              p: 2,
+              backgroundColor: "background.default",
+            }}
+          >
+            {messages.length === 0 && (
+              <Box sx={{ textAlign: "center", mt: 10 }}>
+                <SmartToyIcon sx={{ fontSize: 64, color: "text.disabled", mb: 2 }} />
+                <Typography color="text.secondary" variant="h6">
+                  Start a conversation...
+                </Typography>
+                <Typography color="text.secondary" variant="body2" sx={{ mt: 1 }}>
+                  Ask anything and I will do my best to help.
+                </Typography>
+              </Box>
+            )}
+            <List>
+              {messages.map((msg, idx) => (
+                <ListItem
+                  key={idx}
                   sx={{
-                    display: "flex",
-                    alignItems: "flex-end",
-                    gap: 1,
-                    maxWidth: "75%",
-                    flexDirection: msg.role === "user" ? "row-reverse" : "row",
+                    justifyContent: msg.role === "user" ? "flex-end" : "flex-start",
+                    px: 0,
+                    py: 0.5,
                   }}
                 >
-                  <ListItemAvatar>
-                    <Avatar
-                      sx={{
-                        bgcolor: msg.role === "user" ? "primary.main" : "secondary.main",
-                        width: 32,
-                        height: 32,
-                        fontSize: "0.75rem",
-                      }}
-                    >
-                      {msg.role === "user" ? "U" : "AI"}
-                    </Avatar>
-                  </ListItemAvatar>
-                  <Paper
-                    variant="outlined"
+                  <Box
                     sx={{
-                      px: 2,
-                      py: 1,
-                      backgroundColor: msg.role === "user" ? "primary.light" : "background.paper",
-                      color: msg.role === "user" ? "primary.contrastText" : "text.primary",
+                      display: "flex",
+                      alignItems: "flex-end",
+                      gap: 1,
+                      maxWidth: "75%",
+                      flexDirection: msg.role === "user" ? "row-reverse" : "row",
                     }}
                   >
-                    <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
-                      {msg.content}
-                    </Typography>
-                  </Paper>
-                </Box>
-              </ListItem>
-            ))}
-            {loading && (
-              <ListItem sx={{ justifyContent: "flex-start", px: 0 }}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <Avatar sx={{ bgcolor: "secondary.main", width: 32, height: 32, fontSize: "0.75rem" }}>
-                    AI
-                  </Avatar>
-                  <CircularProgress size={20} />
-                </Box>
-              </ListItem>
-            )}
-            {error && (
-              <Typography color="error" sx={{ mt: 1, textAlign: "center" }}>
-                {error}
-              </Typography>
-            )}
-            <div ref={endRef} />
-          </List>
-        </Box>
+                    <ListItemAvatar>
+                      <Avatar
+                        sx={{
+                          bgcolor: msg.role === "user" ? "primary.main" : "secondary.main",
+                          width: 36,
+                          height: 36,
+                        }}
+                      >
+                        {msg.role === "user" ? <PersonIcon fontSize="small" /> : <SmartToyIcon fontSize="small" />}
+                      </Avatar>
+                    </ListItemAvatar>
+                    <Paper
+                      elevation={1}
+                      sx={{
+                        px: 2,
+                        py: 1.5,
+                        borderRadius: 2,
+                        backgroundColor: msg.role === "user" ? "primary.main" : "background.paper",
+                        color: msg.role === "user" ? "primary.contrastText" : "text.primary",
+                        borderTopLeftRadius: msg.role === "assistant" ? 0 : 2,
+                        borderTopRightRadius: msg.role === "user" ? 0 : 2,
+                      }}
+                    >
+                      <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
+                        {msg.content}
+                      </Typography>
+                    </Paper>
+                  </Box>
+                </ListItem>
+              ))}
+              {loading && (
+                <ListItem sx={{ justifyContent: "flex-start", px: 0 }}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Avatar sx={{ bgcolor: "secondary.main", width: 36, height: 36 }}>
+                      <SmartToyIcon fontSize="small" />
+                    </Avatar>
+                    <CircularProgress size={24} />
+                  </Box>
+                </ListItem>
+              )}
+              {error && (
+                <Typography color="error" sx={{ mt: 1, textAlign: "center" }}>
+                  {error}
+                </Typography>
+              )}
+              <div ref={endRef} />
+            </List>
+          </Box>
 
-        <Box sx={{ display: "flex", gap: 1, mt: 2 }}>
-          <TextField
-            fullWidth
-            variant="outlined"
-            placeholder="Type your message..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            disabled={loading}
-          />
-          <IconButton
-            color="primary"
-            onClick={sendMessage}
-            disabled={loading || !input.trim()}
-            sx={{ backgroundColor: "primary.main", color: "primary.contrastText", "&:hover": { backgroundColor: "primary.dark" } }}
-          >
-            ➤
-          </IconButton>
-        </Box>
-      </Paper>
-    </Container>
+          <Box sx={{ p: 2, borderTop: "1px solid", borderColor: "divider", display: "flex", gap: 1 }}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              placeholder="Type your message..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              disabled={loading}
+              size="small"
+            />
+            <IconButton
+              color="primary"
+              onClick={sendMessage}
+              disabled={loading || !input.trim()}
+              sx={{
+                backgroundColor: "primary.main",
+                color: "primary.contrastText",
+                "&:hover": { backgroundColor: "primary.dark" },
+                "&.Mui-disabled": { backgroundColor: "action.disabledBackground" },
+              }}
+            >
+              <SendIcon />
+            </IconButton>
+          </Box>
+        </Paper>
+      </Container>
+    </Box>
   );
 };
 
