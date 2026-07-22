@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "react-oidc-context";
 
@@ -7,6 +8,12 @@ import Chat from "./pages/Chat";
 function AuthGate() {
   const auth = useAuth();
 
+  useEffect(() => {
+    if (!auth.isLoading && !auth.isAuthenticated) {
+      auth.signinRedirect();
+    }
+  }, [auth.isLoading, auth.isAuthenticated]);
+
   if (auth.isLoading) {
     return <div>Loading...</div>;
   }
@@ -15,13 +22,10 @@ function AuthGate() {
     return <div>Encountering error... {auth.error.message}</div>;
   }
 
-  // Active Cognito session -> Dashboard.
   if (auth.isAuthenticated) {
     return <Navigate to="/dashboard" replace />;
   }
 
-  // No session -> Cognito login (once).
-  auth.signinRedirect();
   return <div>Redirecting to login...</div>;
 }
 

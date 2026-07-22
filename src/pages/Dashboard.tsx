@@ -11,7 +11,6 @@ import {
   Divider,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import EmailIcon from "@mui/icons-material/Email";
 import ChatIcon from "@mui/icons-material/Chat";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import LinkOffIcon from "@mui/icons-material/LinkOff";
@@ -29,17 +28,7 @@ const providers = [
     name: "Outlook",
     icon: <MicrosoftIcon />,
     connected: false,
-  },
-  {
-    name: "Yahoo Mail",
-    icon: <EmailIcon />,
-    connected: false,
-  },
-  {
-    name: "iCloud Mail",
-    icon: <EmailIcon />,
-    connected: false,
-  },
+  }
 ];
 
 const paletteConst = {

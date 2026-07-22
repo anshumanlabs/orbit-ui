@@ -11,8 +11,16 @@ const cognitoAuthConfig = {
   redirect_uri: import.meta.env.VITE_COGNITO_REDIRECT_URI,
   response_type: import.meta.env.VITE_COGNITO_RESPONSE_TYPE,
   scope: import.meta.env.VITE_COGNITO_SCOPE,
+  extraQueryParams: { identity_provider: "COGNITO" },
   onSigninCallback: () => {
     window.history.replaceState({}, document.title, window.location.pathname);
+  },
+  metadata: {
+    issuer: import.meta.env.VITE_COGNITO_AUTHORITY,
+    authorization_endpoint: `${import.meta.env.VITE_COGNITO_AUTHORITY}/oauth2/authorize`,
+    token_endpoint: `${import.meta.env.VITE_COGNITO_AUTHORITY}/oauth2/token`,
+    userinfo_endpoint: `${import.meta.env.VITE_COGNITO_AUTHORITY}/oauth2/userInfo`,
+    end_session_endpoint: `${import.meta.env.VITE_COGNITO_AUTHORITY}/logout`,
   },
 };
 
